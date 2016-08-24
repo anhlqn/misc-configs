@@ -1,0 +1,55 @@
+# Set to true to log user information returned from LDAP
+verbose_logging = true
+
+[[servers]]
+# Ldap server host (specify multiple hosts space separated)
+host = "192.168.1.10"
+# Default port is 389 or 636 if use_ssl = true
+port = 389
+# Set to true if ldap server supports TLS
+use_ssl = false
+# set to true if you want to skip ssl cert validation
+ssl_skip_verify = false
+# set to the path to your root CA certificate or leave unset to use system defaults
+# root_ca_cert = /path/to/certificate.crt
+
+# Search user bind dn
+bind_dn = "CN=grafana,DC=example,DC=com"
+# Search user bind password
+bind_password = 'p@ssw0rd'
+
+# User search filter, for example "(cn=%s)" or "(sAMAccountName=%s)" or "(uid=%s)"
+search_filter = "(sAMAccountName=%s)"
+
+# An array of base dns to search through
+search_base_dns = ["DC=example,DC=com"]
+
+# In POSIX LDAP schemas, without memberOf attribute a secondary query must be made for groups.
+# This is done by enabling group_search_filter below. You must also set member_of= "cn"
+# in [servers.attributes] below.
+
+## Group search filter, to retrieve the groups of which the user is a member (only set if memberOf attribute is not available)
+# group_search_filter = "(&(objectClass=posixGroup)(memberUid=%s))"
+## An array of the base DNs to search through for groups. Typically uses OU=groups
+# group_search_base_dns = ["OU=groups,DC=grafana,DC=org"]
+
+# Specify names of the ldap attributes your ldap uses
+[servers.attributes]
+name = "givenName"
+surname = "sn"
+username = "sAMAccountName"
+member_of = "memberOf"
+email =  "mail"
+
+# Map ldap groups to grafana org roles
+# The Grafana organization database id, optional, if left out the default org (id 1) will be used
+
+[[servers.group_mappings]]
+group_dn = "CN=Grafana-Users,DC=example,DC=com"
+org_role = "Editor"
+org_id = 1
+
+[[servers.group_mappings]]
+# If you want to match all (or no ldap groups) then you can use wildcard
+#group_dn = "*"
+#org_role = "Viewer"
